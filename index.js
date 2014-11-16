@@ -1,11 +1,19 @@
 var PORT = 4000, URL = 'localhost';
-var path = require('path');
-var io = require(path.join(__dirname, 'node_modules/socket.io/')).listen(PORT,URL);
 
-var home = io.of('/home')
-	.on('connection',function(socket){
-		//console.log(io.transports[socket.id].name);
-		console.log("someone connected");		
-	});	
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+server.listen(PORT, URL);
+
+app.use(function (req, res, next)
+{
+	res.set('Access-Control-Allow-Origin', '*');
+	next()
+})
+
+io.of('/home').on('connection', function (socket) {
+	console.log("someone connected");
+});
 
 console.log('Server is now listening...');
